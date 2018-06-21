@@ -67,11 +67,20 @@ p9 = a*p7+b*p8;
 G=1+p2+p3+p4+p5+p6+p7+p8+p9;
 
 
-Rp = h*N(3)+2*N(6)*a+h*N(6)*2+h*N(8)*2+h*N(9)*(.5*2+3*a)+N(5)*h*(.24*h+2*a);
+//Rp = h*N(3)+2*N(6)*a+h*N(6)*2+h*N(8)*2+h*N(9)*(.5*2+3*a)+N(5)*h*(.24*h+2*a);
+gamma_12 = 0.5;
+gamma_12H = 0.333;
+//The reward function for player 1 (selfish miner 1) is as follows:
+Rp = (N(3)*a*(h/2)) + (2*N(3)*a) + (N(3)*a*b) + (N(6)*a) + (2*N(6)*a) + (2*N(8)*h) + (2*N(8)*a^2) + (3*N(8)*(a*(1-a))) + (2*N(9)*gamma_12*h) + (3*N(9)*a) + (3*N(8)*h*a) + (N(5)*gamma_12H) + (2*N(5)*a);
 
-Rh = N(1)*h+N(5)*.25+h*.25*N(5)+N(5)*h*h;
+//Rh = N(1)*h+N(5)*.25+h*.25*N(5)+N(5)*h*h;
 
-Rp2 = h*N(2)+2*b*N(4)+h*N(4)*b+N(7)*h*2+h*N(9)*(.5*2+3*b)+N(5)*h*(.24*h+2*b);
+//The reward for the honest miner is as follows:
+Rh = (N(1)*h) + (2*N(3)*(h/2)) + (2*N(3)*(h/2)) + (N(9)*gamma_12*h) + (N(9)*gamma_12*h) + (N(5)*gamma_12H) + (N(5)*gamma_12H);
+
+//The reward function for player 2 (selfish miner 2) is as follows:
+Rp2 = (N(3)*b*(h/2)) + (2*N(3)*b) + (N(3)*b*a) + (N(6)*b) + (2*N(6)*b) + (2*N(8)*h) + (2*N(8)*b^2) + (3*N(8)*(b*(1-b))) + (2*N(9)*gamma_12*h) + (3*N(9)*b) + (3*N(8)*h*b) + (N(5)*gamma_12H) + (2*N(5)*b);
+
 
 
 Re=Rp/(Rp+Rh+Rp2);
