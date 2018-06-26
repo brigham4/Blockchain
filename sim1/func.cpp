@@ -141,7 +141,8 @@ int RaceSet::prune(){
       }
     }
   }
-  
+
+  return 0;
 }
 
 
@@ -324,6 +325,7 @@ int Chain::mineBlock(int id){
     this->length++;
 
   }
+  return 0; 
 }
 
 
@@ -355,7 +357,8 @@ int overide(Player * p, Chain * c){
   while(curr!=NULL){
     curr->blockID = curr->prev->blockID + 1;
     curr = curr->next;
-  }  
+  }
+  return 0; 
 }
 
 
@@ -373,9 +376,10 @@ int selfish(Player * p, Chain * c){
    int comp = c->race_set->getLength();
    int pub_len = p->chain->origin->blockID;
   
-   if((len<comp||(p->chain->length==0) && ((p->chain->origin->playerID)!=(p->id)))){
-     /* printf("h1\n");*/
+   if((len<comp||((p->chain->length==0) && ((p->chain->origin->playerID)!=(p->id))))){
      /*give up*/
+     printf("h1\n");
+     printf("p %d\n",p->id);
      p->chain->origin = c->race_set->choose();
      p->chain->head = NULL;
      p->chain->tail = NULL;
@@ -383,8 +387,8 @@ int selfish(Player * p, Chain * c){
      return 0;
    }
    else if(len==comp && len!=0 && p->chain->length!=0){/*race*/
-     /* printf("h2\n");*/
-     
+     printf("h2\n");
+     printf("p %d\n",p->id);
      Block * b = p->chain->tail;
      p->chain->length = 0;
      p->chain->head = NULL;
@@ -396,7 +400,8 @@ int selfish(Player * p, Chain * c){
      /*release - len should equal 1 in this case*/
    }
    else if(c->race_set->numTied()>1 && len==(comp+1)){
-     /*  printf("h3\n");*/
+       printf("h3\n");
+         printf("p %d\n",p->id);
      Block * n = p->chain->tail;
      Block * n2 = p->chain->head;
      n2->prev = p->chain->origin;
@@ -407,7 +412,8 @@ int selfish(Player * p, Chain * c){
      return 1;
    }
    else if(len==(comp+1) && pub_len<comp){/*release both blocks*/
-     /*      printf("h4\n");*/
+           printf("h4\n");
+	     printf("p %d\n",p->id);
       Block * n = p->chain->tail;
       Block * s = p->chain->head;
       s->prev = p->chain->origin;
@@ -421,7 +427,8 @@ int selfish(Player * p, Chain * c){
       return 1;
    }
    else if((len-comp)>=2 && pub_len<comp){/*publish 1 block*/
-     /* printf("h5\n");*/
+     printf("h5\n");
+       printf("p %d\n",p->id);
      Block * n = p->chain->head;
      p->chain->head = p->chain->head->next;
      p->chain->origin = n;
@@ -488,6 +495,7 @@ int states(Player ** players, int num_players, Chain * chain){
     p = players[i];
     p->strategy(chain);
   }
+  return 0;
 }
 
 
@@ -498,14 +506,14 @@ int rounds(int num_players, int rounds,Player ** players ,Chain * chain){
   float h1 = p1->hash;
   float h2 = p2->hash;
   int i = 0;
-  float vec[10]={.1,.1,.8,.8,.7,.1,.1,.1};  
+  float vec[10]={.1,.1,.7,.7,.8,.8,.1,.8,.1,.1};  
   for(i=0;i<rounds;i++){
     int j = 0;
     float total = 0;
     Player * p;
     float r = ((float)rand())/((float)RAND_MAX);
 
-    /* r=vec[i];*/
+    r=vec[i];
   
     while(j<num_players){
       total = total + players[j]->hash;
@@ -529,23 +537,26 @@ int rounds(int num_players, int rounds,Player ** players ,Chain * chain){
 int main(){
 
   Chain * chain = new Chain();
-  Player * p1 = new Player(.6,1);
-  Player * p2 = new Player(.2,2);
-  Player * p3 = new Player(.2,3);
+  Player * p1 = new Player(.5,1);
+  Player * p2 = new Player(.25,2);
+  Player * p3 = new Player(.25,3);
+  Player * p4 = new Player(0,4);
   Block * gen = new Block(-1);
   chain->appendBlock(gen,NULL,1); 
   p1->chain->origin = gen;
   p2->chain->origin = gen;
   p3->chain->origin = gen;
+  p4->chain->origin = gen;
   
 
   int (*h)(Player * p, Chain * c) = honestMine;
   int (*s)(Player * p, Chain * c) = selfish;
   p1->strat = h;
-  p2->strat = h;
+  p2->strat = s;
   p3->strat = s;
+  p4->strat = s;
   int num_players = 3;
-  int num_rounds = 8000000;
+  int num_rounds = 10;
   Player * arr[3] = {p1,p2,p3};
   rounds(num_players,num_rounds,arr,chain);
   Block * curr = chain->race_set->choose();
@@ -558,8 +569,12 @@ int main(){
       printf("blockID = %d\n",curr->blockID);
       p2->mined++;
     }
-    else{
+    else if(curr->playerID==3){
       p3->mined++;
+       printf("blockID = %d\n",curr->blockID);
+    }
+    else{
+      p4->mined++;
         printf("blockID = %d\n",curr->blockID);
     }
     curr=curr->prev;
@@ -567,10 +582,12 @@ int main(){
   float m11 = (float)p1->mined;
   float m22 = (float)p2->mined;
   float m33 = (float)p3->mined;
-  float m1 = m11/(m11+m22+m33);
-  float m2 = m22/(m11+m22+m33);
-  float m3 = m33/(m11+m22+m33);
-  printf("p1: %f, p2: %f, p3: %f\n",m1,m2,m3);
+  float m44 = (float)p4->mined;
+  float m1 = m11/(m11+m22+m33+m44);
+  float m2 = m22/(m11+m22+m33+m44);
+  float m3 = m33/(m11+m22+m33+m44);
+  float m4 = m44/(m11+m22+m33+m44);
+  printf("p1: %f, p2: %f, p3: %f, p4: %f\n",m1,m2,m3,m4);
  
 }
 
