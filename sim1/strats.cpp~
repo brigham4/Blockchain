@@ -45,7 +45,6 @@ int pub_n(Player * p, Chain * c){
     n->prev = t;
     n->branches->erase(n->next);
     p->pchain->length--;
-    n->prev->branches->insert(n);
     c->appendBlock(n,n->prev,p->gamma);
     return 1;
   }

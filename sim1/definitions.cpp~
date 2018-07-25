@@ -291,8 +291,8 @@ int privateChain::clear(){
 
 
 Player::~Player(){
-    this->pchain->clear();
-     delete this->pchain;
+  //   this->pchain->clear();
+  //   delete this->pchain;
   
   //   delete this;
 }

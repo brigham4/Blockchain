@@ -201,10 +201,10 @@ int game2(){
   //  p1->gamma = 15;
   // p2->gamma=4;
   // p3->gamma=4;
-  //  std::ofstream myfile;
-  // myfile.open("sdfdf.txt");
-  // myfile << "sdfd";
-  //myfile.close();
+  std::ofstream myfile;
+  myfile.open("sdfdf.txt");
+  myfile << "sdfd";
+  myfile.close();
   
   int (*h)(Player * p, Chain * c) = honestMine;
   int (*s)(Player * p, Chain * c) = selfish;

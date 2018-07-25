@@ -50,8 +50,8 @@ int rounds(int num_players, int rounds,Player ** players ,Chain * chain){
   for(i=0;i<rounds;i++){
        int percent = (int)(100*((float)i)/((float)rounds));
        if(interval==0||i%interval==0){
-	 //	 	   printf("%d\%\r",percent);
-	 //  std::cout.flush(); 
+	 	   printf("%d\%\r",percent);
+	  std::cout.flush(); 
     }
     int j = 0;
     float total = 0;

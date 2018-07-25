@@ -3,7 +3,3 @@ win:
 
 nix:
 	make -f Makefile.nix
-
-
-
-
